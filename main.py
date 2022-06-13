@@ -138,7 +138,7 @@ class YoutubeBot:
             publishButton = self.findByID("done-button")
 
             # check if ready
-            self.findByXPath("//div[contains(text(), 'Processing will begin shortly.')]")
+            self.findByXPath("//div[contains(text(), 'Processing will begin shortly')]")
 
             # click publish
             publishButton.click()              
