@@ -1,7 +1,7 @@
 [User-Settings]
-email = ''
-password = ''
-channel_studio_page = ''
-video_path = r''
-vid_title = ""
-loops = 5
+email = youremail@gmail.com
+password = your password
+channel_studio_page = your channel studio page link
+video_path = your video path
+vid_title = your video title
+loops = number of videos to upload
