@@ -8,17 +8,17 @@ from selenium.webdriver.common.keys import Keys
 import time
 from dateutil.tz import *
 
-mail_address = 'youremail@gmail.com' # your youtube account email
+mail_address = '' # your youtube account email
 
-password = 'yourpassword' # your youtube account password
+password = '' # your youtube account password
 
-channel_studio_page = 'https://studio.youtube.com/channel/yourchannelid/videos' # link to your youtube channel's studio page
+channel_studio_page = '' # link to your youtube channel's studio page
 
-video_path = r'C:\yourfilepath' # file path to video you want to upload
+video_path = r'' # file path to video you want to upload
 
-vid_title = "your video title" # title of video to upload
+vid_title = "" # title of video to upload
 
-loops = 5 # amount of videos to upload
+loops = 10 # amount of videos to upload
 
 class YoutubeBot:
     def __init__(self):
@@ -138,7 +138,7 @@ class YoutubeBot:
             publishButton = self.findByID("done-button")
 
             # check if ready
-            self.findByXPath("//div[contains(text(), 'Processing video...')]")
+            self.findByXPath("//div[contains(text(), 'Processing will begin shortly.')]")
 
             # click publish
             publishButton.click()              
