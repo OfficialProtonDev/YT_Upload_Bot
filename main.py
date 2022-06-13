@@ -96,8 +96,6 @@ class YoutubeBot:
 
             path = video_path
 
-            time.sleep(1)
-
             # takes you to the upload page
             uploadButton = self.findByID("create-icon")
             uploadButton.click()
