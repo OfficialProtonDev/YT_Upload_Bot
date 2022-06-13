@@ -86,6 +86,7 @@ class YoutubeBot:
         channel_studio_page = config.get('User-Settings', 'channel_studio_page')
         video_path = config.get('User-Settings', 'video_path')
         vid_title = config.get('User-Settings', 'vid_title')
+        vid_desc = config.get('User-Settings', 'vid_desc')
         loops = config.get('User-Settings', 'loops')
 
         self.googleLogin(email, password)
@@ -105,9 +106,14 @@ class YoutubeBot:
             uploadFile.send_keys(video_path)
 
             # input title
-            titleInput = self.findByID("textbox")
+            titleInput = self.findByXPath("/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[1]/ytcp-social-suggestions-textbox/ytcp-form-input-container/div[1]/div[2]/div/ytcp-social-suggestion-input/div")
             titleInput.clear()
             titleInput.send_keys(vid_title)
+
+            # input description
+            descInput = self.findByXPath("/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[2]/ytcp-social-suggestions-textbox/ytcp-form-input-container/div[1]/div[2]/div/ytcp-social-suggestion-input/div")
+            descInput.clear()
+            descInput.send_keys(vid_desc)
 
             # input not for kids
             notForKidsToggle = self.findByName("VIDEO_MADE_FOR_KIDS_NOT_MFK")
