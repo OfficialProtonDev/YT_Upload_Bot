@@ -7,18 +7,7 @@ import selenium.common.exceptions as exc
 from selenium.webdriver.common.keys import Keys
 import time
 from dateutil.tz import *
-
-mail_address = '' # your youtube account email
-
-password = '' # your youtube account password
-
-channel_studio_page = '' # link to your youtube channel's studio page
-
-video_path = r'' # file path to video you want to upload
-
-vid_title = "" # title of video to upload
-
-loops = 10 # amount of videos to upload
+import configparser
 
 class YoutubeBot:
     def __init__(self):
@@ -72,7 +61,7 @@ class YoutubeBot:
                     time.sleep(1)
         return found
 
-    def googleLogin(self):
+    def googleLogin(self, mail_address, password):
         self.driver.get("https://accounts.google.com/ServiceLogin/signinchooser?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&hl=en&ec=65620&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
 
         emailid=self.driver.find_element(by=By.XPATH, value="//input[@name='identifier']")
@@ -88,13 +77,20 @@ class YoutubeBot:
         time.sleep(3)
 
     def upload_videos(self):
+        config = configparser.ConfigParser()
+        config.readfp(open(r'config.txt'))
 
-        self.googleLogin()
+        email = config.get('User-Settings', 'email')
+        password = config.get('User-Settings', 'password')
+        channel_studio_page = config.get('User-Settings', 'channel_studio_page')
+        video_path = config.get('User-Settings', 'video_path')
+        vid_title = config.get('User-Settings', 'video_title')
+        loops = config.get('User-Settings', 'loops')
+
+        self.googleLogin(email, password)
 
         for _ in range(loops):
             self.driver.get(channel_studio_page)
-
-            path = video_path
 
             # takes you to the upload page
             uploadButton = self.findByID("create-icon")
@@ -105,7 +101,7 @@ class YoutubeBot:
             uploadButton2.click()    
 
             uploadFile = self.findByXPath("//input[@type='file']")
-            uploadFile.send_keys(path)
+            uploadFile.send_keys(video_path)
 
             # input title
             titleInput = self.findByID("textbox")

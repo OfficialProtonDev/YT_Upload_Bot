@@ -1,0 +1,7 @@
+[User-Settings]
+email = ''
+password = ''
+channel_studio_page = ''
+video_path = r''
+vid_title = ""
+loops = 5
