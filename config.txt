@@ -1,6 +1,6 @@
 [User-Settings]
-email = youremail@gmail.com
-password = your password
+email = test@gmail.com
+password = test
 channel_studio_page = your channel studio page link
 video_path = your video path
 vid_title = your video title
