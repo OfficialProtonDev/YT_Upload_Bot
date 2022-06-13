@@ -78,18 +78,19 @@ class YoutubeBot:
 
     def upload_videos(self):
         config = configparser.ConfigParser()
+
         config.readfp(open(r'config.txt'))
 
         email = config.get('User-Settings', 'email')
         password = config.get('User-Settings', 'password')
         channel_studio_page = config.get('User-Settings', 'channel_studio_page')
         video_path = config.get('User-Settings', 'video_path')
-        vid_title = config.get('User-Settings', 'video_title')
+        vid_title = config.get('User-Settings', 'vid_title')
         loops = config.get('User-Settings', 'loops')
 
         self.googleLogin(email, password)
 
-        for _ in range(loops):
+        for _ in range(int(loops)):
             self.driver.get(channel_studio_page)
 
             # takes you to the upload page
