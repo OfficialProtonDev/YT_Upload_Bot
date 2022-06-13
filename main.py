@@ -1,3 +1,5 @@
+from distutils.command.upload import upload
+from msilib.schema import PublishComponent
 from selenium import webdriver
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
@@ -5,18 +7,20 @@ import selenium.common.exceptions as exc
 from selenium.webdriver.common.keys import Keys
 import time
 from dateutil.tz import *
-import os
-import sys
 
-mail_address = ''
-password = ''
-channel_studio_page = ''
+mail_address = 'youremail@gmail.com' # your youtube account email
 
-vid_title = ""
+password = 'yourpassword' # your youtube account password
 
-loops = 5
+channel_studio_page = 'https://studio.youtube.com/channel/yourchannelid/videos' # link to your youtube channel's studio page
 
-class TikTokBot:
+video_path = r'C:\yourfilepath' # file path to video you want to upload
+
+vid_title = "your video title" # title of video to upload
+
+loops = 5 # amount of videos to upload
+
+class YoutubeBot:
     def __init__(self):
         chrome_options = uc.ChromeOptions()
 
@@ -34,16 +38,46 @@ class TikTokBot:
 
         self.executor_url = self.driver.command_executor._url
         self.session_id = self.driver.session_id
-        print(self.executor_url, self.session_id)
 
-    def upload_video(self):
+    def findByID(self, ID):
+        while True:
+                try:
+                    found = self.driver.find_element(by=By.ID, value=ID)
+                    #print("found: " + ID)
+                    break
+                except exc.NoSuchElementException or exc.ElementClickInterceptedException:
+                    #print("finding: " + ID)
+                    time.sleep(1)
+        return found
 
+    def findByXPath(self, xpath):
+        while True:
+                try:
+                    found = self.driver.find_element(by=By.XPATH, value=xpath)
+                    #print("found: " + xpath)
+                    break
+                except exc.NoSuchElementException or exc.ElementClickInterceptedException:
+                    #print("finding: " + xpath)
+                    time.sleep(1)
+        return found
+
+    def findByName(self, name):
+        while True:
+                try:
+                    found = self.driver.find_element(by=By.NAME, value=name)
+                    #print("found: " + name)
+                    break
+                except exc.NoSuchElementException or exc.ElementClickInterceptedException:
+                    #print("finding: " + name)
+                    time.sleep(1)
+        return found
+
+    def googleLogin(self):
         self.driver.get("https://accounts.google.com/ServiceLogin/signinchooser?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&hl=en&ec=65620&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
 
         emailid=self.driver.find_element(by=By.XPATH, value="//input[@name='identifier']")
         emailid.send_keys(mail_address)
         self.driver.find_element(by=By.XPATH, value="//button[@class='VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-k8QpJ VfPpkd-LgbsSe-OWXEXe-dgl2Hf nCP5yc AjY5Oe DuMIQc qfvgSe qIypjc TrZEUc lw1w4b']").click()
-        
 
         time.sleep(3)
 
@@ -53,137 +87,74 @@ class TikTokBot:
 
         time.sleep(3)
 
+    def upload_videos(self):
+
+        self.googleLogin()
+
         for _ in range(loops):
             self.driver.get(channel_studio_page)
 
-            path = r"C:\YT_Bot\qauz3i.mp4"
+            path = video_path
 
             time.sleep(1)
 
             # takes you to the upload page
-            while True:
-                try:
-                    self.driver.find_element(by=By.ID, value="create-icon").click()
-                    print("clicked create button")
-                    break
-                except exc.NoSuchElementException or exc.ElementClickInterceptedException:
-                    print("finding create button")
-                    time.sleep(1)
-      
+            uploadButton = self.findByID("create-icon")
+            uploadButton.click()
 
-                # click upload button
-            while True:
-                try:
-                    self.driver.find_element(by=By.ID, value="text-item-0").click()
-                    print("clicked upload button")
-                    break
-                except exc.NoSuchElementException or exc.ElementClickInterceptedException:
-                    print("finding upload button")
-                    time.sleep(1)      
+            # click upload button
+            uploadButton2 = self.findByID("text-item-0")
+            uploadButton2.click()    
 
-            while True:
-                try:
-                    s = self.driver.find_element(by=By.XPATH, value="//input[@type='file']")
-                    s.send_keys(path)
-                    print("sent file")
-                    break
-                except exc.NoSuchElementException or exc.ElementClickInterceptedException:
-                    print("finding upload file button")
-                    time.sleep(1)
+            uploadFile = self.findByXPath("//input[@type='file']")
+            uploadFile.send_keys(path)
 
-                # input title
-            while True:
-                try:
-                    s = self.driver.find_element(by=By.ID, value="textbox")
-                    s.clear()
-                    s.send_keys(vid_title)
-                    print("sent title")
-                    break
-                except exc.NoSuchElementException:
-                    print("finding title")
-                    time.sleep(1)  
+            # input title
+            titleInput = self.findByID("textbox")
+            titleInput.clear()
+            titleInput.send_keys(vid_title)
 
             # input not for kids
-            while True:
-                try:
-                    self.driver.find_element(by=By.NAME, value="VIDEO_MADE_FOR_KIDS_NOT_MFK").click()
-                    print("set nfk")
-                    break
-                except exc.NoSuchElementException or exc.ElementNotInteractableException:
-                    print("finding nfk toggle")
-                    time.sleep(1)            
-
-                # click next button
-            while True:
-                try:
-                    self.driver.find_element(by=By.ID, value="next-button").click()
-                    print("clicked next button")
-                    break
-                except exc.NoSuchElementException:
-                    print("finding next button")
-                    time.sleep(1)     
-
-                # click next button
-            while True:
-                try:
-                    self.driver.find_element(by=By.ID, value="next-button").click()
-                    print("clicked next button")
-                    break
-                except exc.NoSuchElementException:
-                    print("finding next button")
-                    time.sleep(1)        
+            notForKidsToggle = self.findByName("VIDEO_MADE_FOR_KIDS_NOT_MFK")
+            notForKidsToggle.click()           
 
             # click next button
-            while True:
-                try:
-                    self.driver.find_element(by=By.ID, value="next-button").click()
-                    print("clicked next button")
-                    break
-                except exc.NoSuchElementException:
-                    print("finding next button")
-                    time.sleep(1)   
+            nextButton = self.findByID("next-button")
+            nextButton.click()      
 
-                # input public     
-            while True:
-                try:
-                    self.driver.find_element(by=By.NAME, value="PUBLIC").click()
-                    print("set public")
-                    break
-                except exc.NoSuchElementException or exc.ElementNotInteractableException:
-                    print("finding privacy toggle")
-                    time.sleep(1)      
+            # click next button
+            nextButton = self.findByID("next-button")
+            nextButton.click()        
 
-            time.sleep(10)
+            # click next button
+            nextButton = self.findByID("next-button")
+            nextButton.click()  
 
-            # click publish button
-            while True:
-                try:
-                    self.driver.find_element(by=By.ID, value="done-button").click()
-                    print("clicked publish button")
-                    break
-                except exc.NoSuchElementException or exc.ElementNotInteractableException:
-                    print("finding publish button")
-                    time.sleep(1)               
+            # input public  
+            privacyToggle = self.findByName("PUBLIC")
+            privacyToggle.click()          
 
-            while True:
-                try:
-                    self.driver.find_element(by=By.ID, value="dialog-title")
-                    break
-                except exc.NoSuchElementException or exc.ElementNotInteractableException:
-                    print("waiting")
-                    time.sleep(1)  
+            # find publish button
+            publishButton = self.findByID("done-button")
 
-            print('done')
+            # check if ready
+            self.findByXPath("//div[contains(text(), 'Processing video...')]")
 
-            time.sleep(1)
+            # click publish
+            publishButton.click()              
 
-        time.sleep(5)
+            self.findByID("dialog-title")
+
+            print('Uploaded video')
+
+        print("All videos uploaded.")
+        time.sleep(1)
         exit()
 
 
 def main():
-    bot = TikTokBot()
-    bot.upload_video()
+    bot = YoutubeBot()
+    bot.upload_videos()
 
 
 
