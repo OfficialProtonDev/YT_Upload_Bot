@@ -1,5 +1,7 @@
 from distutils.command.upload import upload
+from fileinput import close
 from msilib.schema import PublishComponent
+from xml.etree.ElementTree import tostring
 from selenium import webdriver
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
@@ -8,6 +10,8 @@ from selenium.webdriver.common.keys import Keys
 import time
 from dateutil.tz import *
 import configparser
+
+config_file = r'config.txt'
 
 class YoutubeBot:
     def __init__(self):
@@ -62,7 +66,7 @@ class YoutubeBot:
         return found
 
     def googleLogin(self, mail_address, password):
-        self.driver.get("https://accounts.google.com/ServiceLogin/signinchooser?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&hl=en&ec=65620&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
+        self.driver.get("https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fstudio.youtube.com%252F&hl=en&passive=false&service=youtube&uilel=0&flowName=GlifWebSignIn&flowEntry=AddSession")
 
         emailid=self.driver.find_element(by=By.XPATH, value="//input[@name='identifier']")
         emailid.send_keys(mail_address)
@@ -76,15 +80,33 @@ class YoutubeBot:
 
         time.sleep(3)
 
+    def attemptClickUntilXPATHFound(self, element, path):
+        while True:
+            try:
+                found = self.driver.find_element(by=By.XPATH, value=path)
+                #print("found it")
+                break
+            except exc.NoSuchElementException:
+                #print("not done click again")  
+                self.tryClick(element)
+                time.sleep(1)
+        return found
+
+    def tryClick(self, element):
+        try:
+            element.click()
+        except exc.ElementClickInterceptedException or exc.ElementNotInteractableException or exc.ElementNotVisibleException or exc.NoSuchElementException:
+            #print("click not possible")
+            pass
+
     def upload_videos(self):
         config = configparser.ConfigParser()
 
-        config.readfp(open(r'config.txt'))
+        config.readfp(open(config_file))
 
         email = config.get('User-Settings', 'email')
         password = config.get('User-Settings', 'password')
-        channel_studio_page = config.get('User-Settings', 'channel_studio_page')
-        video_path = config.get('User-Settings', 'video_path')
+        vid_path = config.get('User-Settings', 'vid_path')
         vid_title = config.get('User-Settings', 'vid_title')
         vid_desc = config.get('User-Settings', 'vid_desc')
         loops = config.get('User-Settings', 'loops')
@@ -92,8 +114,6 @@ class YoutubeBot:
         self.googleLogin(email, password)
 
         for _ in range(int(loops)):
-            self.driver.get(channel_studio_page)
-
             # takes you to the upload page
             uploadButton = self.findByID("create-icon")
             uploadButton.click()
@@ -103,7 +123,7 @@ class YoutubeBot:
             uploadButton2.click()    
 
             uploadFile = self.findByXPath("//input[@type='file']")
-            uploadFile.send_keys(video_path)
+            uploadFile.send_keys(vid_path)
 
             # input title
             titleInput = self.findByXPath("/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[1]/ytcp-social-suggestions-textbox/ytcp-form-input-container/div[1]/div[2]/div/ytcp-social-suggestion-input/div")
@@ -134,19 +154,20 @@ class YoutubeBot:
             # input public  
             privacyToggle = self.findByName("PUBLIC")
             privacyToggle.click()          
-
+            
             # find publish button
             publishButton = self.findByID("done-button")
 
-            # check if ready
+            # check if processing
             self.findByXPath("//div[contains(text(), 'Processing will begin shortly')]")
 
-            # click publish
-            publishButton.click()              
+            # click publish until the close button appears
+            closeButton = self.attemptClickUntilXPATHFound(publishButton, "/html/body/ytcp-uploads-still-processing-dialog/ytcp-dialog/tp-yt-paper-dialog/div[3]/ytcp-button")             
 
-            self.findByID("dialog-title")
+            # click the close button
+            closeButton.click()
 
-            print('Uploaded video')
+            print('Uploaded video #' + tostring(_) + " of #" + tostring(loops))
 
         print("All videos uploaded.")
         time.sleep(1)
