@@ -167,7 +167,7 @@ class YoutubeBot:
             # click the close button
             closeButton.click()
 
-            print('Uploaded video #' + tostring(_) + " of #" + tostring(loops))
+            print('Uploaded video')
 
         print("All videos uploaded.")
         time.sleep(1)
