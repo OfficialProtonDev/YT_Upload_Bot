@@ -21,10 +21,11 @@ vid_title = "REPLACE_ME"
 vid_desc = "REPLACE_ME"
 loops = 1
 ```
-3. Repeat installation steps 2 - 5
-4. Type `python main.py` and hit enter.
-5. Do not touch your computer while the program runs. You should see your videos uploading.
-6. Wait for the program to finish and you're all done!
+3. Save the main.py file and exit it
+4. Repeat installation steps 2 - 5
+5. Type `python main.py` and hit enter.
+6. Do not touch your computer while the program runs. You should see your videos uploading.
+7. Wait for the program to finish and you're all done!
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
