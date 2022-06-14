@@ -1,6 +1,5 @@
 from youtubeBot import YoutubeBot
 
-
 def main():
     email = "REPLACE_ME"
     password = "REPLACE_ME"
