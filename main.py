@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 from dateutil.tz import *
 import configparser
+import time
 
 config_file = r'config.txt'
 
@@ -118,6 +119,8 @@ class YoutubeBot:
             uploadButton = self.findByID("create-icon")
             uploadButton.click()
 
+            start_time = time.time()
+
             # click upload button
             uploadButton2 = self.findByID("text-item-0")
             uploadButton2.click()    
@@ -167,10 +170,11 @@ class YoutubeBot:
             # click the close button
             closeButton.click()
 
-            print('Uploaded video')
+            finish_time = time.time() - start_time
 
-        print("All videos uploaded.")
-        time.sleep(1)
+            print('Uploaded video in ', finish_time)
+
+        print("All videos uploaded")
         exit()
 
 
