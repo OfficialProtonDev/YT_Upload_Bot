@@ -17,8 +17,7 @@ YouTube Upload Bot is a program that will auto upload a video for you any number
 [User-Settings]
 email = youremail@gmail.com
 password = your password
-channel_studio_page = your channel studio page link
-video_path = your video path
+vid_path = your video path
 vid_title = your video title
 vid_desc = your video description
 loops = number of videos to upload
