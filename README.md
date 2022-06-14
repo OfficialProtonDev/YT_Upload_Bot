@@ -14,12 +14,12 @@ YouTube Upload Bot is a program that will auto upload a video for you any number
 1. Open the main.py file in any text or code editor.
 2. Change these lines to your information:
 ```
-    email = "REPLACE_ME"
-    password = "REPLACE_ME"
-    vid_path = r"REPLACE_ME"
-    vid_title = "REPLACE_ME"
-    vid_desc = "REPLACE_ME"
-    loops = 1
+email = "REPLACE_ME"
+password = "REPLACE_ME"
+vid_path = r"REPLACE_ME"
+vid_title = "REPLACE_ME"
+vid_desc = "REPLACE_ME"
+loops = 1
 ```
 3. Repeat installation steps 2 - 5
 4. Type `python main.py` and hit enter.
