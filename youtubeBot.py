@@ -1,6 +1,7 @@
 from distutils.command.upload import upload
-import email
+from fileinput import close
 from msilib.schema import PublishComponent
+from xml.etree.ElementTree import tostring
 from selenium import webdriver
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
@@ -8,7 +9,7 @@ import selenium.common.exceptions as exc
 from selenium.webdriver.common.keys import Keys
 import time
 from dateutil.tz import *
-import configparser
+import time
 
 class YoutubeBot:
     def __init__(self, email, password, vid_path, vid_title, vid_desc, loops):
@@ -23,9 +24,13 @@ class YoutubeBot:
         chrome_options = uc.ChromeOptions()
 
         chrome_options.add_argument("--disable-extensions")
+
         chrome_options.add_argument("--disable-popup-blocking")
+
         chrome_options.add_argument("--profile-directory=Default")
+
         chrome_options.add_argument("--disable-plugins-discovery")
+
         chrome_options.add_argument("user_agent=DN")
 
         self.driver = uc.Chrome(options=chrome_options)
@@ -67,7 +72,7 @@ class YoutubeBot:
         return found
 
     def googleLogin(self, mail_address, password):
-        self.driver.get("https://accounts.google.com/ServiceLogin/signinchooser?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252F&hl=en&ec=65620&flowName=GlifWebSignIn&flowEntry=ServiceLogin")
+        self.driver.get("https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fstudio.youtube.com%252F&hl=en&passive=false&service=youtube&uilel=0&flowName=GlifWebSignIn&flowEntry=AddSession")
 
         emailid=self.driver.find_element(by=By.XPATH, value="//input[@name='identifier']")
         emailid.send_keys(mail_address)
@@ -81,36 +86,51 @@ class YoutubeBot:
 
         time.sleep(3)
 
+    def attemptClickUntilXPATHFound(self, element, path):
+        while True:
+            try:
+                found = self.driver.find_element(by=By.XPATH, value=path)
+                #print("found it")
+                break
+            except exc.NoSuchElementException:
+                #print("not done click again")  
+                self.tryClick(element)
+                time.sleep(1)
+        return found
+
+    def tryClick(self, element):
+        try:
+            element.click()
+        except exc.ElementClickInterceptedException or exc.ElementNotInteractableException or exc.ElementNotVisibleException or exc.NoSuchElementException:
+            #print("click not possible")
+            pass
+
     def upload_videos(self):
-        config = configparser.ConfigParser()
+        self.googleLogin(self.email, self.password)
 
-        config.readfp(open(r'config.txt'))
-
-        self.googleLogin(email, password)
-
-        for _ in range(int(loops)):
-            self.driver.get("https://studio.youtube.com/")
-
+        for _ in range(int(self.loops)):
             # takes you to the upload page
             uploadButton = self.findByID("create-icon")
             uploadButton.click()
+
+            start_time = time.time()
 
             # click upload button
             uploadButton2 = self.findByID("text-item-0")
             uploadButton2.click()    
 
             uploadFile = self.findByXPath("//input[@type='file']")
-            uploadFile.send_keys(video_path)
+            uploadFile.send_keys(self.vid_path)
 
             # input title
             titleInput = self.findByXPath("/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[1]/ytcp-social-suggestions-textbox/ytcp-form-input-container/div[1]/div[2]/div/ytcp-social-suggestion-input/div")
             titleInput.clear()
-            titleInput.send_keys(vid_title)
+            titleInput.send_keys(self.vid_title)
 
             # input description
             descInput = self.findByXPath("/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[2]/ytcp-social-suggestions-textbox/ytcp-form-input-container/div[1]/div[2]/div/ytcp-social-suggestion-input/div")
             descInput.clear()
-            descInput.send_keys(vid_desc)
+            descInput.send_keys(self.vid_desc)
 
             # input not for kids
             notForKidsToggle = self.findByName("VIDEO_MADE_FOR_KIDS_NOT_MFK")
@@ -131,20 +151,22 @@ class YoutubeBot:
             # input public  
             privacyToggle = self.findByName("PUBLIC")
             privacyToggle.click()          
-
+            
             # find publish button
             publishButton = self.findByID("done-button")
 
-            # check if ready
+            # check if processing
             self.findByXPath("//div[contains(text(), 'Processing will begin shortly')]")
 
-            # click publish
-            publishButton.click()              
+            # click publish until the close button appears
+            closeButton = self.attemptClickUntilXPATHFound(publishButton, "/html/body/ytcp-uploads-still-processing-dialog/ytcp-dialog/tp-yt-paper-dialog/div[3]/ytcp-button")             
 
-            self.findByID("dialog-title")
+            # click the close button
+            closeButton.click()
 
-            print('Uploaded video')
+            finish_time = time.time() - start_time
 
-        print("All videos uploaded.")
-        time.sleep(1)
+            print('Uploaded video in ', finish_time)
+
+        print("All videos uploaded")
         exit()
