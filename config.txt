@@ -1,7 +1,0 @@
-[User-Settings]
-email = youremail@gmail.com
-password = your password
-vid_path = your file path
-vid_title = your video title
-vid_desc = your video description
-loops = number of times to upload
