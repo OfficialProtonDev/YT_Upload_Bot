@@ -100,14 +100,13 @@ class YoutubeBot:
             except exc.NoSuchElementException:
                 #print("not done click again")
                 self.tryClick(element)
-                time.sleep(1)
+                time.sleep(0.1)
         return found
 
     def tryClick(self, element):
         try:
             element.click()
         except exc.ElementClickInterceptedException or exc.ElementNotInteractableException or exc.ElementNotVisibleException or exc.NoSuchElementException:
-            #print("click not possible")
             pass
 
     def upload_videos(self):
@@ -116,13 +115,13 @@ class YoutubeBot:
         for _ in range(int(self.loops)):
             # takes you to the upload page
             uploadButton = self.findByID("create-icon")
-            uploadButton.click()
+            self.tryClick(uploadButton)
 
             start_time = time.time()
 
             # click upload button
             uploadButton2 = self.findByID("text-item-0")
-            uploadButton2.click()
+            self.tryClick(uploadButton2)
 
             uploadFile = self.findByXPath("//input[@type='file']")
             uploadFile.send_keys(self.vid_path)
@@ -141,23 +140,16 @@ class YoutubeBot:
 
             # input not for kids
             notForKidsToggle = self.findByName("VIDEO_MADE_FOR_KIDS_NOT_MFK")
-            notForKidsToggle.click()
+            self.tryClick(notForKidsToggle)
 
             # click next button
             nextButton = self.findByID("next-button")
-            nextButton.click()
 
-            # click next button
-            nextButton = self.findByID("next-button")
-            nextButton.click()
-
-            # click next button
-            nextButton = self.findByID("next-button")
-            nextButton.click()
+            privacyToggle = self.attemptClickUntilXPATHFound(
+                nextButton, "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-uploads-review/div[2]/div[1]/ytcp-video-visibility-select/div[1]/tp-yt-paper-radio-group/tp-yt-paper-radio-button[3]")
 
             # input public
-            privacyToggle = self.findByName("PUBLIC")
-            privacyToggle.click()
+            self.tryClick(privacyToggle)
 
             # find publish button
             publishButton = self.findByID("done-button")
@@ -171,7 +163,7 @@ class YoutubeBot:
                 publishButton, "/html/body/ytcp-uploads-still-processing-dialog/ytcp-dialog/tp-yt-paper-dialog/div[3]/ytcp-button")
 
             # click the close button
-            closeButton.click()
+            self.tryClick(closeButton)
 
             finish_time = time.time() - start_time
 
