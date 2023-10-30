@@ -27,13 +27,4 @@ loops = 1
 6. Do not touch your computer while the program runs. You should see your videos uploading.
 7. Wait for the program to finish and you're all done!
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## Community Based
-We are a community based nonprofit. We are always open to pull requests on any of our repos. You will always be given credit for all of your work. Depending on what you contribute, we will give you any revenue earned on your contributions 💰💰💰!
-
-**We are always looking for new Volunteers to join our Champions!
-If you have any ideas for videos or programs, let us know!**
-
 
