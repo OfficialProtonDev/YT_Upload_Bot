@@ -1,9 +1,9 @@
-# YouTube Upload Bot
-YouTube Upload Bot is a program that will auto upload a video for you any number of times.
-
-# IMPORTANT NOTE
+# IMPORTANT NOTICE
 This is most likely outdated and no longer functions, but I have not confirmed this.
 I will not be maintaining this repository.
+
+# YouTube Upload Bot
+YouTube Upload Bot is a program that will auto upload a video for you any number of times.
 
 ## Installation
 1. First clone or download the repo, make sure you also have python installed!
